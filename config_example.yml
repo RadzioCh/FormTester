@@ -1,0 +1,13 @@
+forms:
+  form_one:
+    name: "Wnioskomat.com"
+    active: true # używany jest pierwszy formularz z listy który ma wartość active = true
+    url: "https://dev.wnioskomat.com/embed/form?typ=aasa_standard_connect&source=wnioskomat.com&origin_url=https%3A%2F%2Fdev.wnioskomat.com%2Fwniosek"
+    fields:
+      name: "Podaj imię brytyjskie"
+
+  form_two:
+    name: "inny.com"
+    active: false
+    url:
+  

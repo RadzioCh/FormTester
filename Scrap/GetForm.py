@@ -10,16 +10,17 @@ import sys
 from Models.Mistral import Mistral
 import time
 
-
 from langchain.chains import RetrievalQA
 
 
 class GetForm():
 
-    def __init__(self, mistral):
+    def __init__(self, mistral, form_config_map):
         self.mistral_conversation = mistral
-        self._url = 'https://dev.wnioskomat.com/embed/form?typ=aasa_standard_connect&source=wnioskomat.com&origin_url=https%3A%2F%2Fdev.wnioskomat.com%2Fwniosek'
-
+        self.form_config_map = form_config_map
+        # self._url = 'https://dev.wnioskomat.com/embed/form?typ=aasa_standard_connect&source=wnioskomat.com&origin_url=https%3A%2F%2Fdev.wnioskomat.com%2Fwniosek'
+        self._url = self.form_config_map['url']
+        
 
     def prompt_test(self):
         response_mistral = self.mistral_conversation.ask_simple_question("Cześć, jak się masz?")
@@ -35,7 +36,7 @@ class GetForm():
         # self.prompt_test()
         # sys.exit()
         form_data = self.get_form_by_selenium()
-        print(form_data)
+        return form_data
         
 
     def get_form_by_requests(self):
@@ -125,7 +126,7 @@ class GetForm():
             my_question += 'Czasem może się zdażyć, że pewien tekst to nie jest opisem pola i nie pasuje do niczego wtedy nie przyporządkowuj go do pola.'
             response_mistral = self.mistral_conversation.ask_simple_question(my_question)
             label_text = response_mistral.content
-            time.sleep(2)
+            time.sleep(1.5)
         
         # if field_id in label_map:
         #     label_text = label_map[field_id]

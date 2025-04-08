@@ -50,8 +50,6 @@ class Mistral:
             print("-", doc.page_content[:200] + "...")
 
 
-
-
 # from langchain.document_loaders import TextLoader
 # from langchain.text_splitter import CharacterTextSplitter
 # from langchain.embeddings import HuggingFaceEmbeddings
