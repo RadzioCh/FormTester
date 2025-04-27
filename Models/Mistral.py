@@ -13,8 +13,10 @@ class Mistral:
         mistral_api_key = os.getenv("MISTRAL_API_KEY")
         self.llm = ChatMistralAI(api_key=mistral_api_key, model="mistral-large-latest")
 
+        meta_prompt = self.meta_prompt()
+
         prompt = ChatPromptTemplate.from_messages([
-            ("system", "Jesteś pomocnym asystentem, testerem formularzy elektronicznych na stonach www."),
+            ("system", meta_prompt),
             ("human", "{input}")
         ])
 
@@ -25,6 +27,18 @@ class Mistral:
             get_session_history=self.get_history,
             input_messages_key="input"
         )
+
+    def meta_prompt(self):
+        mp = "Jesteś pomocnym asystentem, testerem formularzy elektronicznych na stonach www. "
+        mp += "Każda interakcja użytkownika z tobą to prośba o zwrócenie wartości do formularza. "
+        mp += "Postępuj według instrukcji."
+        mp += "<instructions>"
+        mp += "1. WAŻNE! Twoja odpowiedź będzie odrazu wykorzystywana do wypełniania pół formularza zatem czystą wartość bez żadnych elementów typu średnik, cudzysłów itp."
+        mp += "2. Dodawaj wartości na podstawie elementu TAG, TYPE, NAME, LABEJ te elementy będą w tagu <field_elements>...</field_elements> w formie "
+        mp += " {{'Tag': 'input', 'Type': 'checkbox', 'Name': 'form[some_name]', 'Value': '', 'Label': 'some description or writing `Brak etykiety` '}} "
+        mp += "3. Czasem możesz dodatć dodatkowe instrukcje dla danego pola będą one w tagu <additional_instructions>...</additional_instructions>"
+        mp += "</instructions>"
+        return mp
 
     def get_history(self, session_id):
         if session_id not in memory_store:

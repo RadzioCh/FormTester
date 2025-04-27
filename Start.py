@@ -16,7 +16,7 @@ class Fire:
         self.form_config_map = form_config_map
 
         self.mistral_conversation = Mistral()
-        self.fill_form = FillForm(self.form_config_map)
+        self.fill_form = FillForm(self.form_config_map, self.mistral_conversation)
     
     def init(self):
         get_form_start = 1
@@ -33,7 +33,7 @@ class Fire:
                     with open(path_to_file, 'r', encoding='utf-8') as ptf:
                         form_data = json.load(ptf)
                         
-                        self.fill_form.fill_form(form_data)
+                        self.fill_form.fill(form_data)
                         # pprint.pprint(form_data)
                         # sys.exit()
 

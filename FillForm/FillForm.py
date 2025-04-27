@@ -3,20 +3,48 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.remote.webelement import WebElement
+import pprint
+import sys
+from Models.Mistral import Mistral
+import time
 
 class FillForm:
 
-    def __init__(self, form_field_map):
+    # {'Tag': 'input', 'Type': 'checkbox', 'Name': 'form[consents_toSave10]', 'Value': '1', 'Label': 'Brak etykiety'}
+
+    def __init__(self, form_field_map, mistral_conversation):
         self.form_field_map = form_field_map
+        self._url = form_field_map['url']
+        self.mistral_conversation = mistral_conversation
 
     def fill(self, form_data):
+
+        # pprint.pprint(self.form_field_map)
+        # sys.exit()
         
-        # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-        # driver.get(self._url)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        driver.get(self._url)
 
         for field in form_data:
+            # print(field['Tag'])
             
-            print(field)
+            match field['Tag']:
+                case 'input':
+                    match field['Type']:
+                        case 'text':
+                            time.sleep(2)
+                            response_mistral =self.mistral_conversation.ask_simple_question("<field_elements>"+str(field)+"</field_elements>")
+
+                            file_input = driver.find_element(By.NAME, field['Name'])
+                            file_input.send_keys(response_mistral.content)
+                        
+                case 'select':
+                    wynik = "Dwa"
+                
+                case _:
+                    wynik = f"Pole "+field['Tag']+" => typ "+field['Type']+" nie obsługiwane"
+
+            
             
 
-        # driver.quit()  # Zamknij przeglądarkę   
+       # driver.quit()  # Zamknij przeglądarkę   
