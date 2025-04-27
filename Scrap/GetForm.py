@@ -9,14 +9,17 @@ from selenium.common.exceptions import NoSuchElementException
 import sys
 from Models.Mistral import Mistral
 import time
-
+import pprint
+import json
 from langchain.chains import RetrievalQA
+import os
 
 
 class GetForm():
 
-    def __init__(self, mistral, form_config_map):
+    def __init__(self, mistral, form_config_map, which_shot):
         self.mistral_conversation = mistral
+        self.which_shot = which_shot
         self.form_config_map = form_config_map
         # self._url = 'https://dev.wnioskomat.com/embed/form?typ=aasa_standard_connect&source=wnioskomat.com&origin_url=https%3A%2F%2Fdev.wnioskomat.com%2Fwniosek'
         self._url = self.form_config_map['url']
@@ -33,9 +36,27 @@ class GetForm():
         sys.exit()
     
     def init(self):
+
+        pprint.pprint(self.form_config_map)
+
         # self.prompt_test()
         # sys.exit()
         form_data = self.get_form_by_selenium()
+
+        
+        save_directory = os.path.join('SavedForms', self.form_config_map['name']) #ścieżkę do katalogu
+        os.makedirs(save_directory, exist_ok=True) # Utwórz katalog
+        filename = f"form_{self.which_shot}.json"
+        full_path = os.path.join(save_directory, filename) # pełna ścieżka
+
+        try:
+            # 'w' - nadpisuje plik, jeśli istnieje, lub tworzy nowy, jeśli nie istnieje
+            with open(full_path, 'w', encoding='utf-8') as file:
+                json.dump(form_data, file, indent=4, ensure_ascii=False)
+            print(f"Pomyślnie zapisano plik")
+        except IOError as e:
+            print(f"Wystąpił błąd podczas zapisu pliku : {e}")
+
         return form_data
         
 
