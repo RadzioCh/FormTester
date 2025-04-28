@@ -1,4 +1,5 @@
 from langchain_mistralai.chat_models import ChatMistralAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -7,21 +8,34 @@ import os
 
 memory_store = {}
 
-class Mistral:
-    def __init__(self):
+class LLMAssistant:
+    def __init__(self, model="mistral"):
         load_dotenv()
-        mistral_api_key = os.getenv("MISTRAL_API_KEY")
-        self.llm = ChatMistralAI(api_key=mistral_api_key, model="mistral-large-latest")
-
+        if model == "mistral":
+            api_key_var = "MISTRAL_API_KEY"
+            model_class = ChatMistralAI
+            model_name = "mistral-large-latest"
+        elif model == "gemini":
+            api_key_var = "GEMINI_API_KEY"
+            model_class = ChatGoogleGenerativeAI
+            model_name = "gemini-1.5-flash-latest"
+        else:
+            raise ValueError(f"Nieobsługiwany model: {model}")
+        
+        api_key = os.getenv(api_key_var)
+        if not api_key:
+            raise ValueError(f"Klucz API dla {model} nie został znaleziony w zmiennych środowiskowych")
+        
+        self.llm = model_class(api_key=api_key, model=model_name)
+        
         meta_prompt = self.meta_prompt()
-
+        # meta_prompt = "Jesteś pomocnikiem"
         prompt = ChatPromptTemplate.from_messages([
             ("system", meta_prompt),
             ("human", "{input}")
         ])
-
+        
         chain = prompt | self.llm
-
         self.conversation = RunnableWithMessageHistory(
             chain,
             get_session_history=self.get_history,

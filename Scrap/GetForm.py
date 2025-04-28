@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import NoSuchElementException
 import sys
-from Models.Mistral import Mistral
+from Models.LLMAssistant import LLMAssistant
 import time
 import pprint
 import json
@@ -17,8 +17,8 @@ import os
 
 class GetForm():
 
-    def __init__(self, mistral, form_config_map, which_shot):
-        self.mistral_conversation = mistral
+    def __init__(self, llm_conversation, form_config_map, which_shot):
+        self.llm_conversation = llm_conversation
         self.which_shot = which_shot
         self.form_config_map = form_config_map
         # self._url = 'https://dev.wnioskomat.com/embed/form?typ=aasa_standard_connect&source=wnioskomat.com&origin_url=https%3A%2F%2Fdev.wnioskomat.com%2Fwniosek'
@@ -26,13 +26,13 @@ class GetForm():
         
 
     def prompt_test(self):
-        response_mistral = self.mistral_conversation.ask_simple_question("Cześć, jak się masz?")
+        response_mistral = self.llm_conversation.ask_simple_question("Cześć, jak się masz?")
         print(response_mistral.content)
         time.sleep(2)
-        response_mistral = self.mistral_conversation.ask_simple_question("O co zapytałem przed chwilą?")
+        response_mistral = self.llm_conversation.ask_simple_question("O co zapytałem przed chwilą?")
         print(response_mistral.content)
         
-        print(self.mistral_conversation.get_history_as_text("default"))
+        print(self.llm_conversation.get_history_as_text("default"))
         sys.exit()
     
     def init(self):
@@ -145,7 +145,7 @@ class GetForm():
             my_question += '- Jeśli znajdziesz dopasowanie zwróć w odpowiedzi TYLKO dany opis i nic poza tym opisem, żadnych innych znaków.'
             my_question += '- Jeśli nie znajdziesz dopasowania zwróć w odpowiedzi tylko ciąg znaków "Brak dopasowania".'
             my_question += 'Czasem może się zdażyć, że pewien tekst to nie jest opisem pola i nie pasuje do niczego wtedy nie przyporządkowuj go do pola.'
-            response_mistral = self.mistral_conversation.ask_simple_question(my_question)
+            response_mistral = self.llm_conversation.ask_simple_question(my_question)
             label_text = response_mistral.content
             time.sleep(1.5)
         

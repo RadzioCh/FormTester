@@ -1,5 +1,5 @@
 import sys
-from Models.Mistral import Mistral
+from Models.LLMAssistant import Mistral
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By

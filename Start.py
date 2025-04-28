@@ -1,5 +1,5 @@
 from Scrap.GetForm import GetForm
-from Models.Mistral import Mistral
+from Models.LLMAssistant import LLMAssistant
 import yaml
 import sys
 from Yml.ConfigParse import ConfigParse
@@ -15,8 +15,8 @@ class Fire:
         form_config_map = config_parse.parse()
         self.form_config_map = form_config_map
 
-        self.mistral_conversation = Mistral()
-        self.fill_form = FillForm(self.form_config_map, self.mistral_conversation)
+        self.llm_conversation = LLMAssistant("gemini")
+        self.fill_form = FillForm(self.form_config_map, self.llm_conversation)
     
     def init(self):
         get_form_start = 1
@@ -45,7 +45,7 @@ class Fire:
             which_shot = 1
             while True:
                 
-                get_form = GetForm(self.mistral_conversation, self.form_config_map, which_shot)
+                get_form = GetForm(self.llm_conversation, self.form_config_map, which_shot)
                 form_map = get_form.init()
                 which_shot += 1
                 
